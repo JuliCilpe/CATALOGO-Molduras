@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CATÁLOGO DE MOLDURAS</title>
+
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+<style>
+
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html,body{
+width:100%;
+height:100%;
+margin:0;
+padding:0;
+overflow:hidden;
+font-family:Arial,Helvetica,sans-serif;
+background:#d9d9d9;
+}
+
+/* ROOT */
+body{
+display:flex;
+flex-direction:column;
+height:100vh;
+}
+
+/* HEADER */
+header{
+flex:0 0 60px;
+height:60px;
+background:#222;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:bold;
+letter-spacing:1px;
+}
+
+/* TOPBAR */
+.topbar{
+flex:0 0 60px;
+height:60px;
+background:white;
+display:flex;
+align-items:center;
+gap:20px;
+padding:0 20px;
+box-shadow:0 2px 10px rgba(0,0,0,.15);
+}
+
+label{
+font-size:18px;
+font-weight:bold;
+}
+
+select{
+width:500px;
+padding:10px;
+font-size:16px;
+border-radius:8px;
+border:1px solid #bbb;
+cursor:pointer;
+}
+
+/* MAIN */
+.main{
+flex:1;
+display:flex;
+padding:10px;
+min-height:0;
+}
+
+/* VIEWER */
+.viewer{
+flex:1;
+display:flex;
+flex-direction:column;
+background:white;
+border-radius:16px;
+overflow:hidden;
+box-shadow:0 10px 25px rgba(0,0,0,.20);
+}
+
+.title{
+height:50px;
+background:#303030;
+color:white;
+display:flex;
+align-items:center;
+padding-left:20px;
+font-size:22px;
+font-weight:bold;
+}
+
+.viewer-wrap{
+flex:1;
+position:relative;
+}
+
+model-viewer{
+width:100%;
+height:100%;
+display:block;
+background:linear-gradient(180deg,#d8d8d8,#8d8d8d);
+transition:opacity .25s ease;
+}
+
+.loading{
+position:absolute;
+inset:0;
+display:none;
+align-items:center;
+justify-content:center;
+background:rgba(0,0,0,.25);
+color:white;
+font-size:18px;
+font-weight:bold;
+}
+
+.info{
+height:42px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:white;
+color:#555;
+font-size:14px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>CATÁLOGO DE MOLDURAS</header>
+
+<div class="topbar">
+
+<label>Moldura</label>
+
+<select id="selector"></select>
+
+</div>
+
+<div class="main">
+
+<div class="viewer">
+
+<div class="title" id="titulo">Cargando...</div>
+
+<div class="viewer-wrap">
+
+<model-viewer
+id="visor"
+camera-controls
+auto-rotate
+auto-rotate-delay="0"
+rotation-per-second="2deg"
+camera-orbit="45deg 70deg 120%"
+field-of-view="18deg"
+interaction-prompt="none"
+loading="eager"
+reveal="auto">
+
+</model-viewer>
+
+<div class="loading" id="loading">
+
+Cargando modelo...
+
+</div>
+
+</div>
+
+<div class="info">
+
+Botón izquierdo = Rotar · Rueda = Zoom · Botón derecho = Desplazar
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+//=====================================
+// CATÁLOGO
+//=====================================
+
+const catalogo = [
+
+{file:"BAJO RELIEVE ANGULO RECTO.glb",name:"BAJO RELIEVE ANGULO RECTO"},
+
+{file:"BAJO RELIEVE RECTO 6mm.glb",name:"BAJO RELIEVE RECTO 6mm"},
+
+{file:"CANALETA V.glb",name:"CANALETA V"},
+
+{file:"CLASICA ANGULO RECTO SIN ESCALON.glb",name:"CLASICA ANGULO RECTO SIN ESCALON"},
+
+{file:"CLASICA ANGULO RECTO.glb",name:"CLASICA ANGULO RECTO"},
+
+{file:"CLASICA ANGULO REDONDO.glb",name:"CLASICA ANGULO REDONDO"},
+
+{file:"DOBLE BAJO RELIEVE RECTO 6mm.glb",name:"DOBLE BAJO RELIEVE RECTO 6mm"},
+
+{file:"FRESA 6mm.glb",name:"FRESA 6mm"},
+
+{file:"FRESADO REDONDO.glb",name:"FRESADO REDONDO"},
+
+{file:"PICO DE GORRION.glb",name:"PICO DE GORRION"},
+
+{file:"PICO PROMA.glb",name:"PICO PROMA"},
+
+{file:"TRAPECIO ANGULO RECTO BAJO RELIEVE RECTO.glb",name:"TRAPECIO ANGULO RECTO BAJO RELIEVE RECTO"},
+
+{file:"TRAPECIO ANGULO RECTO BAJO RELIEVE.glb",name:"TRAPECIO ANGULO RECTO BAJO RELIEVE"},
+
+{file:"TRAPECIO ANGULO RECTO.glb",name:"TRAPECIO ANGULO RECTO"},
+
+{file:"VMAX.glb",name:"VMAX"},
+
+{file:"WMAX.glb",name:"WMAX"}
+
+];
+
+//=====================================
+// ELEMENTOS
+//=====================================
+
+const visor=document.getElementById("visor");
+const selector=document.getElementById("selector");
+const titulo=document.getElementById("titulo");
+const loading=document.getElementById("loading");
+
+//=====================================
+// RELLENAR SELECT
+//=====================================
+
+catalogo.forEach(item=>{
+
+const opcion=document.createElement("option");
+
+opcion.value=item.file;
+
+opcion.textContent=item.name;
+
+selector.appendChild(opcion);
+
+});
+
+//=====================================
+
+let cargando=false;
+
+//=====================================
+
+function cargarModelo(){
+
+if(cargando)return;
+
+cargando=true;
+
+loading.style.display="flex";
+
+visor.style.opacity=.3;
+
+const seleccionado=catalogo.find(m=>m.file===selector.value);
+
+titulo.textContent=seleccionado.name;
+
+const terminado=()=>{
+
+visor.style.opacity=1;
+
+loading.style.display="none";
+
+cargando=false;
+
+visor.removeEventListener("load",terminado);
+
+};
+
+visor.addEventListener("load",terminado);
+
+visor.src=seleccionado.file;
+
+}
+
+selector.addEventListener("change",cargarModelo);
+
+selector.selectedIndex=0;
+
+cargarModelo();
+
+</script>
+
+</body>
+</html>
